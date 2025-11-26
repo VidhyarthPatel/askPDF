@@ -1,7 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #f9f9f9;
   --foreground: #171717;
 }
 
@@ -14,13 +15,69 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #ffffff;
     --foreground: #ededed;
   }
 }
 
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+}
+
+/* KEYFRAMES FOR "SLIDE & PAUSE" (6 BRANDS)
+
+  Calculation:
+  - Total motion: -50% (to move one full set of logos)
+  - Motion per brand: -50% / 6 brands = -8.3333% per brand
+  
+  Timing:
+  - We have 6 steps. We'll make each "step" (pause + slide) last 15% of the time.
+  - (15% * 6 steps = 90%). The final 10% is for the last slide back to the start.
+  - Inside each 15% step: 12% pause, 3% slide.
+*/
+@keyframes slide-and-pause {
+  /* Pause on Brand 1 */
+  0%, 12% {
+    transform: translateX(0%);
+  }
+  /* Slide to and Pause on Brand 2 */
+  15%, 27% {
+    transform: translateX(-8.3333%); /* -8.3333% * 1 */
+  }
+  /* Slide to and Pause on Brand 3 */
+  30%, 42% {
+    transform: translateX(-16.6666%); /* -8.3333% * 2 */
+  }
+  /* Slide to and Pause on Brand 4 */
+  45%, 57% {
+    transform: translateX(-25%); /* -8.3333% * 3 */
+  }
+  /* Slide to and Pause on Brand 5 */
+  60%, 72% {
+    transform: translateX(-33.3333%); /* -8.3333% * 4 */
+  }
+  /* Slide to and Pause on Brand 6 */
+  75%, 87% {
+    transform: translateX(-41.6666%); /* -8.3333% * 5 */
+  }
+  /* Slide back to the loop point (which is -50%) */
+  100% {
+    transform: translateX(-50%); /* -8.3333% * 6 */
+  }
+}
+
+/* Apply the new animation to our class */
+.animate-slide-and-pause {
+  /* Adjust duration: (6 logos * 5s per logo = 30s) 
+     This keeps the pause time consistent.
+  */
+  animation: slide-and-pause 30s linear infinite;
+}
+
+/* Pause the animation when hovering over the parent 'group' */
+.group:hover .animate-slide-and-pause {
+  animation-play-state: paused;
 }

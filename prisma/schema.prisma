@@ -1,0 +1,75 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // <--- ADDED THIS (Crucial!)
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// USER MODEL
+// -----------
+// Handles credentials-based auth + trial tracking
+model User {
+  id             String    @id @default(uuid())
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  passwordHash   String?
+  freeTrialsUsed Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  accounts       Account[]
+  sessions       Session[]
+}
+
+
+// ACCOUNT MODEL (for NextAuth)
+// ----------------------------
+// Even if you start with credentials, you can add Google or GitHub later easily.
+model Account {
+  id                 String  @id @default(uuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+// SESSION MODEL (for NextAuth)
+// ----------------------------
+// If you use JWT sessions, this model won't be used much — but it's good to keep.
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+// VERIFICATION TOKEN MODEL (optional for passwordless/email)
+// ----------------------------------------------------------
+// Needed if you ever add email-based login or password reset.
+model VerificationToken {
+  identifier String
+  token      String @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
