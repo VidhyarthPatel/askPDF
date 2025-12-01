@@ -33,7 +33,7 @@ function Navbar() {
             Sign in
           </a>
 
-          <a href="/signup" className='bg-[#3a00a5] hover:bg-[#2d0080] transition-colors text-white cursor-pointer px-6 py-2.5 rounded-lg text-base font-medium'>
+          <a href="/chat" className='bg-[#3a00a5] hover:bg-[#2d0080] transition-colors text-white cursor-pointer px-6 py-2.5 rounded-lg text-base font-medium'>
             Start for Free
           </a>
         </div>

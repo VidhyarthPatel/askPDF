@@ -15,7 +15,7 @@ const CredentialsSchema = z.object({
 });
 
 export const authConfig = {
-  session: { strategy: "database" },
+  session: { strategy: "jwt" },
   adapter: PrismaAdapter(prisma),
   providers: [
     Google({

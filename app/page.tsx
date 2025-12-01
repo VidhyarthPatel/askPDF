@@ -5,8 +5,11 @@ import OtherStuff from "@/components/otherStuff";
 import Pricing from "@/components/pricing";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/footer";
+import { auth } from "@/lib/auth";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
   return (
     <div className="text-black">
       <Navbar />

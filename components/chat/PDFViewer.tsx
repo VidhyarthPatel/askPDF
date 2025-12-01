@@ -1,4 +1,7 @@
+"use client";
+
 import { useRef } from "react";
+import dynamic from "next/dynamic";
 
 interface PDFViewerProps {
     pdfFile: File | null;
@@ -9,6 +12,12 @@ interface PDFViewerProps {
     onFileRemove: () => void;
     onFileSelect: (file: File) => void;
 }
+
+// 🔥 Dynamically load PDFPages (browser-only)
+const PDFPages = dynamic(() => import("./PDFRenderer").then((mod) => mod.PDFPages), {
+    ssr: false,
+    loading: () => <p className="text-gray-500 p-4">Loading PDF...</p>,
+});
 
 export function PDFViewer({
     pdfFile,
@@ -27,15 +36,13 @@ export function PDFViewer({
 
     const handleDrop = (e: React.DragEvent): void => {
         e.preventDefault();
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            const file = files[0];
-            onFileSelect(file);
-        }
+        const file = e.dataTransfer.files?.[0];
+        if (file) onFileSelect(file);
     };
 
     return (
         <div className="flex flex-col h-full">
+            {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900">PDF Viewer</h2>
                 {pdfFile && (
@@ -53,113 +60,48 @@ export function PDFViewer({
                 )}
             </div>
 
-            {/* PDF Upload/View Area */}
+            {/* Upload or Pages */}
             <div
-                className={`flex-1 border-2 border-dashed border-gray-300 rounded-lg ${!pdfFile ? "hover:border-[#3a00a5] cursor-pointer" : ""
-                    } transition-colors overflow-hidden bg-gray-50`}
+                className={`flex-1 border-2 border-dashed border-gray-300 rounded-lg transition-colors bg-gray-50 ${!pdfFile ? "hover:border-[#3a00a5] cursor-pointer" : ""
+                    }`}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
                 onClick={() => !pdfFile && fileInputRef.current?.click()}
             >
                 {!pdfFile ? (
+                    // 🚀 Upload Box
                     <div className="h-full flex flex-col items-center justify-center p-8 text-center">
                         <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                             <span className="text-3xl">📄</span>
                         </div>
+
                         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                            {isUploading
-                                ? "Uploading... (slowly, of course)"
-                                : "Upload your PDF"}
+                            {isUploading ? "Uploading..." : "Upload your PDF"}
                         </h3>
+
                         <p className="text-gray-600 text-sm mb-4">
                             {isUploading
-                                ? "I'm uploading your PDF at dial-up speeds. Please hold..."
-                                : "Drag & drop or click to upload. I promise I'll try to read it... eventually."}
+                                ? "Uploading your PDF, wait broski..."
+                                : "Drag & drop or click to upload your PDF"}
                         </p>
+
                         <input
-                            type="file"
                             ref={fileInputRef}
+                            type="file"
                             onChange={onFileUpload}
-                            accept=".pdf"
+                            accept="application/pdf"
                             className="hidden"
-                            disabled={isUploading}
                         />
+
                         {!isUploading && (
-                            <button
-                                type="button"
-                                className="bg-[#3a00a5] hover:bg-[#2d0080] text-white px-6 py-2 rounded-lg font-medium transition-all"
-                            >
+                            <button className="bg-[#3a00a5] hover:bg-[#2d0080] text-white px-6 py-2 rounded-lg font-medium transition-all">
                                 Choose PDF
                             </button>
                         )}
                     </div>
                 ) : (
-                    <div className="h-full flex flex-col">
-                        {/* PDF Preview */}
-                        <div className="flex-1 flex flex-col items-center justify-center p-4 overflow-auto">
-                            <div className="w-full h-full flex flex-col items-center justify-center">
-                                <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                                    <span className="text-2xl">📄</span>
-                                </div>
-                                <h4 className="font-semibold text-gray-900 mb-2 text-center">
-                                    {pdfName}
-                                </h4>
-                                <p className="text-gray-600 mb-4 text-center">
-                                    PDF successfully uploaded!
-                                </p>
-
-                                {/* PDF Preview with Download Option */}
-                                <div className="bg-white border border-gray-200 rounded-lg p-4 max-w-sm w-full">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                                            <span className="text-lg">📄</span>
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-gray-900 truncate">
-                                                {pdfName}
-                                            </p>
-                                            <p className="text-xs text-gray-500">PDF Document</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex gap-2">
-                                        <a
-                                            href={pdfUrl}
-                                            download={pdfName}
-                                            className="flex-1 bg-[#3a00a5] hover:bg-[#2d0080] text-white text-center py-2 px-3 rounded text-sm transition-colors"
-                                        >
-                                            Download
-                                        </a>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                window.open(pdfUrl, "_blank");
-                                            }}
-                                            className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-3 rounded text-sm transition-colors"
-                                        >
-                                            Open
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <p className="text-sm text-gray-500 text-center mt-4">
-                                    (In a production app, this would show
-                                    <br />
-                                    an actual PDF viewer with pages)
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* PDF Info Footer */}
-                        <div className="border-t border-gray-200 bg-white p-3">
-                            <div className="flex items-center justify-between text-sm">
-                                <span className="text-gray-600">Ready for slow questioning</span>
-                                <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
-                                    PDF Loaded
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+                    // 📄 REAL PDF Pages (dynamic browser-only)
+                    <PDFPages pdfUrl={pdfUrl} />
                 )}
             </div>
         </div>
