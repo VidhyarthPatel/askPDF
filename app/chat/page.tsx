@@ -8,5 +8,8 @@ export default async function ChatPage() {
     redirect("/signin");
   }
 
-  return <ChatPageContent />;
+  // Ensure we have a user ID. Fallback to email or throw if needed.
+  const userId = session.user?.id || session.user?.email || "unknown-user";
+
+  return <ChatPageContent userId={userId} />;
 }

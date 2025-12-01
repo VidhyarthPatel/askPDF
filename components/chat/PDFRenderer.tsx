@@ -14,6 +14,8 @@ function PDFPage({ pdfDocument, pageNumber, scale }: { pdfDocument: pdfjs.PDFDoc
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        let isCancelled = false;
+
         const renderPage = async () => {
             try {
                 // Cancel previous render task if it exists
@@ -22,6 +24,10 @@ function PDFPage({ pdfDocument, pageNumber, scale }: { pdfDocument: pdfjs.PDFDoc
                 }
 
                 const page = await pdfDocument.getPage(pageNumber);
+
+                // If effect was cleaned up (cancelled) while awaiting getPage, stop here
+                if (isCancelled) return;
+
                 const viewport = page.getViewport({ scale });
                 const canvas = canvasRef.current;
                 if (!canvas) return;
@@ -42,7 +48,7 @@ function PDFPage({ pdfDocument, pageNumber, scale }: { pdfDocument: pdfjs.PDFDoc
                 renderTaskRef.current = null; // Clear task after completion
             } catch (err: any) {
                 // Ignore cancellation errors
-                if (err.name === "RenderingCancelledException") {
+                if (err.name === "RenderingCancelledException" || isCancelled) {
                     return;
                 }
                 console.error(`Error rendering page ${pageNumber}:`, err);
@@ -54,6 +60,7 @@ function PDFPage({ pdfDocument, pageNumber, scale }: { pdfDocument: pdfjs.PDFDoc
 
         // Cleanup: cancel render on unmount or dependency change
         return () => {
+            isCancelled = true;
             if (renderTaskRef.current) {
                 renderTaskRef.current.cancel();
             }

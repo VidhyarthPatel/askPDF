@@ -13,7 +13,11 @@ interface Message {
     timestamp: Date;
 }
 
-export default function ChatPageContent() {
+interface ChatPageContentProps {
+    userId: string;
+}
+
+export default function ChatPageContent({ userId }: ChatPageContentProps) {
     const [messages, setMessages] = useState<Message[]>([
         {
             id: 1,
@@ -48,65 +52,89 @@ export default function ChatPageContent() {
         // 👉 Send to backend /api/upload
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("userId", userId);
 
-        const res = await fetch("/api/upload", {
-            method: "POST",
-            body: formData,
-        });
+        try {
+            const res = await fetch("/api/upload", {
+                method: "POST",
+                body: formData,
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (!data.url && !data.secure_url) {
+            if (!res.ok) {
+                throw new Error(data.error || "Upload failed");
+            }
+
+            const cloudUrl = data.cloudinaryUrl || data.secure_url || data.url;
+
+            // 👉 Store in React state
+            setPdfFile(file);
+            setPdfName(file.name);
+            setPdfUrl(cloudUrl);
+
+            setIsUploading(false);
+
+            // Success message
             setMessages(prev => [...prev, {
                 id: messages.length + 1,
-                text: "Cloud upload failed broski :(",
+                text: `PDF uploaded to Cloudinary: "${file.name}". Ready to generate embeddings broski.`,
+                isUser: false,
+                timestamp: new Date(),
+            }]);
+        } catch (error: any) {
+            setMessages(prev => [...prev, {
+                id: messages.length + 1,
+                text: `Upload failed: ${error.message}`,
                 isUser: false,
                 timestamp: new Date(),
             }]);
             setIsUploading(false);
-            return;
         }
-
-        const cloudUrl = data.secure_url || data.url;
-
-        // 👉 Store in React state
-        setPdfFile(file);
-        setPdfName(file.name);
-        setPdfUrl(cloudUrl);
-
-        setIsUploading(false);
-
-        // Success message
-        setMessages(prev => [...prev, {
-            id: messages.length + 1,
-            text: `PDF uploaded to Cloudinary: "${file.name}". Ready to generate embeddings broski.`,
-            isUser: false,
-            timestamp: new Date(),
-        }]);
     };
 
 
     const handleFileSelect = (file: File): void => {
         if (file && file.type === "application/pdf") {
+            // Re-use the upload logic for drag-and-drop if possible, or just mock it for now
+            // But ideally we should upload it.
+            // For now, let's just trigger the upload manually or warn the user.
+            // Since handleFileSelect is likely from a drag-drop component, we should probably call handleFileUpload logic.
+            // But handleFileUpload expects an event.
+            // Let's just call the upload logic directly.
+
+            // We'll just set it for preview and trigger upload
             setIsUploading(true);
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("userId", userId);
 
-            setTimeout(() => {
-                setPdfFile(file);
-                setPdfName(file.name);
+            fetch("/api/upload", { method: "POST", body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) throw new Error(data.error);
+                    const cloudUrl = data.cloudinaryUrl;
+                    setPdfFile(file);
+                    setPdfName(file.name);
+                    setPdfUrl(cloudUrl);
+                    setIsUploading(false);
+                    setMessages(prev => [...prev, {
+                        id: messages.length + 1,
+                        text: `Great! I've uploaded "${file.name}". Ask me anything about this PDF.`,
+                        isUser: false,
+                        timestamp: new Date(),
+                    }]);
+                })
+                .catch(err => {
+                    setIsUploading(false);
+                    setMessages(prev => [...prev, {
+                        id: messages.length + 1,
+                        text: `Upload failed: ${err.message}`,
+                        isUser: false,
+                        timestamp: new Date(),
+                    }]);
+                });
 
-                const url = URL.createObjectURL(file);
-                setPdfUrl(url);
-
-                setIsUploading(false);
-
-                const successMessage: Message = {
-                    id: messages.length + 1,
-                    text: `Great! I've uploaded "${file.name}". Now I can barely read it. Ask me anything about this PDF... if you have the patience.`,
-                    isUser: false,
-                    timestamp: new Date(),
-                };
-                setMessages(prev => [...prev, successMessage]);
-            }, 2000);
         } else if (file) {
             const errorMessage: Message = {
                 id: messages.length + 1,
@@ -138,10 +166,10 @@ export default function ChatPageContent() {
         e.preventDefault();
         if (!inputMessage.trim()) return;
 
-        if (!pdfFile) {
+        if (!pdfFile && !pdfUrl) {
             const noPdfMessage: Message = {
                 id: messages.length + 1,
-                text: "I'd love to chat, but you need to upload a PDF first. I'm not just a regular chatbot - I'm specifically designed to be slow with PDFs!",
+                text: "I'd love to chat, but you need to upload a PDF first.",
                 isUser: false,
                 timestamp: new Date(),
             };
@@ -160,28 +188,35 @@ export default function ChatPageContent() {
         setInputMessage("");
         setIsLoading(true);
 
-        setTimeout(() => {
-            const pdfResponses: string[] = [
-                `Let me check the PDF... Oh wait, I'm still loading page 1 of "${pdfName}".`,
-                "Scanning through the PDF... (I found some words! This is progress)",
-                `Processing your question about "${pdfName}"... This might take a while, I read at dial-up speed.`,
-                "Hmm, let me look that up in the PDF... *flips virtual pages slowly*",
-                "Consulting the ancient PDF wisdom... (Translation: I'm loading the document)",
-                `Searching "${pdfName}" for answers... Found the title page! Making progress...`,
-            ];
+        try {
+            const res = await fetch("/api/query", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, question: inputMessage }),
+            });
 
-            const randomResponse = pdfResponses[Math.floor(Math.random() * pdfResponses.length)];
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.error || "Failed to get answer");
 
             const botMessage: Message = {
                 id: messages.length + 2,
-                text: randomResponse,
+                text: data.answer,
                 isUser: false,
                 timestamp: new Date(),
             };
-
             setMessages((prev) => [...prev, botMessage]);
+        } catch (error: any) {
+            const errorMessage: Message = {
+                id: messages.length + 2,
+                text: `Error: ${error.message}`,
+                isUser: false,
+                timestamp: new Date(),
+            };
+            setMessages((prev) => [...prev, errorMessage]);
+        } finally {
             setIsLoading(false);
-        }, 2000 + Math.random() * 3000);
+        }
     };
 
     return (
