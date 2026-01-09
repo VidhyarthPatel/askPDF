@@ -43,7 +43,7 @@ export function ChatInterface({
     };
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full min-h-0 overflow-hidden">
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900">Chat with PDF</h2>
                 {pdfFile && (
@@ -54,7 +54,7 @@ export function ChatInterface({
             </div>
 
             {/* Messages Container */}
-            <div className="flex-1 overflow-y-auto mb-4 space-y-4 py-4 border border-gray-200 rounded-lg bg-white">
+            <div className="flex-1 min-h-0 overflow-y-auto mb-4 space-y-4 py-4 border border-gray-200 rounded-lg bg-white">
                 {messages.map((message) => (
                     <div
                         key={message.id}
@@ -63,8 +63,8 @@ export function ChatInterface({
                     >
                         <div
                             className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.isUser
-                                    ? "bg-[#3a00a5] text-white rounded-br-none"
-                                    : "bg-gray-100 text-gray-900 rounded-bl-none"
+                                ? "bg-[#3a00a5] text-white rounded-br-none"
+                                : "bg-gray-100 text-gray-900 rounded-bl-none"
                                 }`}
                         >
                             <div className="flex items-start gap-2">

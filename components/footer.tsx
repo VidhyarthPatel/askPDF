@@ -23,7 +23,7 @@ const item: Variants = {
 
 function Footer() {
     return (
-        <footer className="relative bg-white border-t border-gray-100">
+        <footer className="relative bg-white border-t border-gray-100 overflow-hidden">
             {/* Floating blobs to match HeroSection vibe */}
             <motion.div
                 aria-hidden

@@ -41,9 +41,9 @@ function OtherStuff() {
   };
 
   return (
-    <section className="bg-[#f9fafb] py-20 sm:py-28">
+    <section className="bg-[#f9fafb] py-20 sm:py-28 overflow-hidden">
       {/* 💬 WHY SLOW SECTION */}
-      <motion.div 
+      <motion.div
         className="max-w-6xl mx-auto px-6 sm:px-8 md:px-12 flex flex-col md:flex-row items-center justify-between gap-12"
         initial="hidden"
         whileInView="visible"
@@ -51,7 +51,7 @@ function OtherStuff() {
         variants={containerVariants}
       >
         {/* LEFT: Text */}
-        <motion.div 
+        <motion.div
           className="flex-1 text-left"
           variants={itemVariants}
         >
@@ -61,16 +61,16 @@ function OtherStuff() {
 
           <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
             Why It's{" "}
-            <motion.span 
+            <motion.span
               className="inline-block bg-blue-200 text-blue-800 font-semibold px-3 py-1 sm:px-4 sm:py-1 rounded-lg -rotate-2 mx-1 sm:mx-2"
-             whileHover={{ 
+              whileHover={{
                 scale: 1.1,
                 rotate: -3,
               }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 400, 
-                damping: 10 
+              transition={{
+                type: "spring",
+                stiffness: 400,
+                damping: 10
               }}
             >
               proudly
@@ -85,14 +85,14 @@ function OtherStuff() {
         </motion.div>
 
         {/* RIGHT: Image */}
-        <motion.div 
+        <motion.div
           className="flex-1 relative"
           variants={imageVariants}
         >
           <div className="absolute -right-8 -bottom-8 w-24 h-24 border-2 border-dotted border-gray-300 rounded-lg opacity-50"></div>
           <div className="absolute -top-6 -left-6 w-16 h-16 border-2 border-dotted border-gray-300 rounded-lg opacity-50"></div>
 
-          <motion.div 
+          <motion.div
             className="relative bg-white rounded-2xl shadow-xl p-4"
             whileHover={{ y: -5 }}
             transition={{ type: "spring", stiffness: 300 }}
@@ -107,7 +107,7 @@ function OtherStuff() {
       </motion.div>
 
       {/* How It Works Heading */}
-      <motion.h1 
+      <motion.h1
         className="text-3xl sm:text-8xl font-extrabold text-gray-900 mb-8 text-center mt-20"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -118,7 +118,7 @@ function OtherStuff() {
       </motion.h1>
 
       {/* 🪄 STEP 1 - Upload PDF */}
-      <motion.div 
+      <motion.div
         className="mt-20 max-w-6xl mx-auto px-6 sm:px-8 md:px-12 flex flex-col md:flex-row items-center justify-between gap-12"
         initial="hidden"
         whileInView="visible"
@@ -126,14 +126,14 @@ function OtherStuff() {
         variants={containerVariants}
       >
         {/* LEFT: Image */}
-        <motion.div 
+        <motion.div
           className="flex-1 relative"
           variants={imageVariants}
         >
           <div className="absolute -right-8 -bottom-8 w-24 h-24 border-2 border-dotted border-gray-300 rounded-lg opacity-50"></div>
           <div className="absolute -top-6 -left-6 w-16 h-16 border-2 border-dotted border-gray-300 rounded-lg opacity-50"></div>
 
-          <motion.div 
+          <motion.div
             className="relative bg-white rounded-2xl shadow-xl p-4"
             whileHover={{ y: -5 }}
             transition={{ type: "spring", stiffness: 300 }}
@@ -147,7 +147,7 @@ function OtherStuff() {
         </motion.div>
 
         {/* RIGHT: Text */}
-        <motion.div 
+        <motion.div
           className="flex-1 text-left order-1 md:order-2"
           variants={itemVariants}
         >
@@ -157,16 +157,16 @@ function OtherStuff() {
 
           <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
             Start With{" "}
-            <motion.span 
+            <motion.span
               className="inline-block bg-green-200 text-green-800 font-semibold px-3 py-1 sm:px-4 sm:py-1 rounded-lg rotate-2 mx-1"
-              whileHover={{ 
+              whileHover={{
                 scale: 1.1,
                 rotate: 3,
               }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 400, 
-                damping: 10 
+              transition={{
+                type: "spring",
+                stiffness: 400,
+                damping: 10
               }}
             >
               Uploading
@@ -182,7 +182,7 @@ function OtherStuff() {
       </motion.div>
 
       {/* ⏳ STEP 2 - Wait Patiently */}
-      <motion.div 
+      <motion.div
         className="mt-20 max-w-6xl mx-auto px-6 sm:px-8 md:px-12 flex flex-col md:flex-row-reverse items-center justify-between gap-12"
         initial="hidden"
         whileInView="visible"
@@ -190,14 +190,14 @@ function OtherStuff() {
         variants={containerVariants}
       >
         {/* RIGHT: Image */}
-        <motion.div 
+        <motion.div
           className="flex-1 relative"
           variants={imageVariants}
         >
           <div className="absolute -left-8 -bottom-8 w-24 h-24 border-2 border-dotted border-gray-300 rounded-lg opacity-50"></div>
           <div className="absolute -top-6 -right-6 w-16 h-16 border-2 border-dotted border-gray-300 rounded-lg opacity-50"></div>
 
-          <motion.div 
+          <motion.div
             className="relative bg-white rounded-2xl shadow-xl p-4"
             whileHover={{ y: -5 }}
             transition={{ type: "spring", stiffness: 300 }}
@@ -211,7 +211,7 @@ function OtherStuff() {
         </motion.div>
 
         {/* LEFT: Text */}
-        <motion.div 
+        <motion.div
           className="flex-1 text-left"
           variants={itemVariants}
         >
@@ -221,16 +221,16 @@ function OtherStuff() {
 
           <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
             Then{" "}
-            <motion.span 
+            <motion.span
               className="inline-block bg-yellow-200 text-yellow-800 font-semibold px-3 py-1 sm:px-4 sm:py-1 rounded-lg -rotate-1 mx-1"
-              whileHover={{ 
+              whileHover={{
                 scale: 1.1,
                 rotate: -3,
               }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 400, 
-                damping: 10 
+              transition={{
+                type: "spring",
+                stiffness: 400,
+                damping: 10
               }}
             >
               Wait
@@ -246,7 +246,7 @@ function OtherStuff() {
       </motion.div>
 
       {/* 🤯 STEP 3 - Ask Questions */}
-      <motion.div 
+      <motion.div
         className="mt-20 max-w-6xl mx-auto px-6 sm:px-8 md:px-12 flex flex-col md:flex-row items-center justify-between gap-12"
         initial="hidden"
         whileInView="visible"
@@ -254,14 +254,14 @@ function OtherStuff() {
         variants={containerVariants}
       >
         {/* LEFT: Image */}
-        <motion.div 
+        <motion.div
           className="flex-1 relative"
           variants={imageVariants}
         >
           <div className="absolute -right-8 -bottom-8 w-24 h-24 border-2 border-dotted border-gray-300 rounded-lg opacity-50"></div>
           <div className="absolute -top-6 -left-6 w-16 h-16 border-2 border-dotted border-gray-300 rounded-lg opacity-50"></div>
 
-          <motion.div 
+          <motion.div
             className="relative bg-white rounded-2xl shadow-xl p-4"
             whileHover={{ y: -5 }}
             transition={{ type: "spring", stiffness: 300 }}
@@ -275,7 +275,7 @@ function OtherStuff() {
         </motion.div>
 
         {/* RIGHT: Text */}
-        <motion.div 
+        <motion.div
           className="flex-1 text-left order-1 md:order-2"
           variants={itemVariants}
         >
@@ -285,16 +285,16 @@ function OtherStuff() {
 
           <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
             Finally{" "}
-            <motion.span 
+            <motion.span
               className="inline-block bg-blue-200 text-blue-800 font-semibold px-3 py-1 sm:px-4 sm:py-1 rounded-lg rotate-2 mx-1"
-              whileHover={{ 
+              whileHover={{
                 scale: 1.1,
                 rotate: 3,
               }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 400, 
-                damping: 10 
+              transition={{
+                type: "spring",
+                stiffness: 400,
+                damping: 10
               }}
             >
               Ask
